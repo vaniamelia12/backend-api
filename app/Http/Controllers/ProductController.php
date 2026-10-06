@@ -29,21 +29,25 @@ class ProductController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:100',
-                'price' => 'required|numeric|min:0'
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|numeric|min:0',
             ]);
+
+            $product = $this->productService->createProduct($validated);
 
             Log::info('Produk baru dibuat', $validated);
 
             return response()->json([
                 'message' => 'Produk berhasil dibuat',
-                'data' => $validated
+                'data' => $product
             ], 201);
 
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
             return response()->json([
-                'message' => 'Terjadi kesalahan pada server'
+                'message' => 'Terjadi kesalahan pada server',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
